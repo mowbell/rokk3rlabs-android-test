@@ -91,16 +91,9 @@ public class AppDatabaseTable {
 
     }
 
-    public Cursor getAllBrands() {
-        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-        builder.setTables(FTS_VIRTUAL_TABLE_BRAND);
 
-        Log.v("MOW Query", builder.buildQuery(null, null, null, null, COL_NAME, null));
-        Cursor cursor = builder.query(mDatabaseOpenHelper.getReadableDatabase(),
-                null, null, null, null, null, COL_NAME);
 
-        return cursor;
-    }
+
 
     public Cursor getWord(String brand) {
         //String selection = COL_NAME + " LIKE ? OR "+KEY_DEFINITION + " LIKE ? ";
@@ -121,16 +114,44 @@ public class AppDatabaseTable {
         //String[] columns = new String[]{COL_NAME, "length(trim(replace('"+brand+"',"+COL_NAME+",''))) AS resultado"};
 
 
-        String[] columns = new String[]{COL_BRAND_NAME, COL_CLOTHING_NAME};
+        String[] columns = new String[]{"length('"+brand+"') as A", "length(replace('"+brand+"',"+COL_BRAND_NAME+",'')) AS B", "length(replace('"+brand+"',"+COL_CLOTHING_NAME+",'')) AS C",COL_BRAND_NAME,COL_CLOTHING_NAME};
 
 
-        //String selection = "length(trim(replace('"+brand+"',"+COL_NAME+",'')))=0";
+        String selection = "(length(replace('"+brand+"',"+COL_BRAND_NAME+",'')) != length('"+brand+"')) || (length(replace('"+brand+"',"+COL_CLOTHING_NAME+",'')) != length('"+brand+"'))";
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(FTS_VIEW_MIXED);
+        Log.v("MOW Query", builder.buildQuery(columns, selection, null, null, null, null, null));
+        Cursor cursor = builder.query(mDatabaseOpenHelper.getReadableDatabase(),
+                columns, selection, null, null, null, null);
+        return cursor;
+    }
+
+
+
+
+
+
+    public Cursor getResults(String brand) {
+
+
+        String[] columns = new String[]{
+                "(SELECT "+COL_BRAND_NAME+" FROM "+FTS_VIRTUAL_TABLE_BRAND+" WHERE (length(replace('"+brand+"',"+COL_BRAND_NAME+",'')) != length('"+brand+"')) LIMIT 1) AS BRAND_FOUND ",
+                "(SELECT "+COL_CLOTHING_NAME+" FROM "+FTS_VIRTUAL_TABLE_CLOTHING+" WHERE (length(replace('"+brand+"',"+COL_CLOTHING_NAME+",'')) != length('"+brand+"')) LIMIT 1) AS CLOTHING_FOUND "
+        };
+
+
+        //String selection = "(length(replace('"+brand+"',"+COL_BRAND_NAME+",'')) != length('"+brand+"')) || (length(replace('"+brand+"',"+COL_CLOTHING_NAME+",'')) != length('"+brand+"'))";
+
+        /*SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        //builder.setTables(FTS_VIEW_MIXED);
         Log.v("MOW Query", builder.buildQuery(columns, null, null, null, null, null, null));
         Cursor cursor = builder.query(mDatabaseOpenHelper.getReadableDatabase(),
-                columns, null, null, null, null, null);
+                columns, null, null, null, null, null);*/
+        String query="SELECT (SELECT "+COL_BRAND_NAME+" FROM "+FTS_VIRTUAL_TABLE_BRAND+" WHERE (length(replace('"+brand+"',"+COL_BRAND_NAME+",'')) != length('"+brand+"')) LIMIT 1) AS BRAND_FOUND, "+ "(SELECT "+COL_CLOTHING_NAME+" FROM "+FTS_VIRTUAL_TABLE_CLOTHING+" WHERE (length(replace('"+brand+"',"+COL_CLOTHING_NAME+",'')) != length('"+brand+"')) LIMIT 1) AS CLOTHING_FOUND ";
+        Log.v("MOW Query", query);
+        Cursor cursor = mDatabaseOpenHelper.getReadableDatabase().rawQuery(query, null);
+
         return cursor;
     }
 

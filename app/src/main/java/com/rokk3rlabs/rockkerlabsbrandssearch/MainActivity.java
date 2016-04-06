@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void doSearchQuery(String query) {
-        Cursor mCursor=db.getWord(query);
+        Cursor mCursor=db.getResults(query);
 
         Log.v("MOW","Cursor data "+mCursor.getCount());
         if (null == mCursor) {
@@ -102,9 +102,22 @@ public class MainActivity extends AppCompatActivity {
                 }*/
 
                 //String brand=mCursor.getString(mCursor.getColumnIndex("resultado"));
+                //String brand=mCursor.getString(mCursor.getColumnIndex(AppDatabaseTable.COL_BRAND_NAME));
+                //String clothing=mCursor.getString(mCursor.getColumnIndex(AppDatabaseTable.COL_CLOTHING_NAME));
+                //Log.v("MOW","BRAND FOUND "+brand+ " "+clothing);
+
+                /*String a=mCursor.getString(mCursor.getColumnIndex("A"));
+                String b=mCursor.getString(mCursor.getColumnIndex("B"));
+                String c=mCursor.getString(mCursor.getColumnIndex("C"));
                 String brand=mCursor.getString(mCursor.getColumnIndex(AppDatabaseTable.COL_BRAND_NAME));
                 String clothing=mCursor.getString(mCursor.getColumnIndex(AppDatabaseTable.COL_CLOTHING_NAME));
-                Log.v("MOW","BRAND FOUND "+brand+ " "+clothing);
+
+                Log.v("MOW",a+" "+b+" "+c+" "+brand+ " "+clothing);*/
+
+                String a=mCursor.getString(mCursor.getColumnIndex("BRAND_FOUND"));
+                String b=mCursor.getString(mCursor.getColumnIndex("CLOTHING_FOUND"));
+
+                Log.v("MOW",a+" "+b+" ");
 
             }
 
