@@ -97,12 +97,14 @@ public class MainActivity extends AppCompatActivity {
             // Insert code here to do something with the results
             //mCursor.moveToFirst();
             while (mCursor.moveToNext()) {
-                for(int i=0; i<mCursor.getColumnNames().length;i++){
+                /*for(int i=0; i<mCursor.getColumnNames().length;i++){
                     Log.v("MOW",mCursor.getColumnNames()[i]);
-                }
+                }*/
 
-                String brand=mCursor.getString(mCursor.getColumnIndex("resultado"));
-                Log.v("MOW","BRAND FOUND "+brand);
+                //String brand=mCursor.getString(mCursor.getColumnIndex("resultado"));
+                String brand=mCursor.getString(mCursor.getColumnIndex(AppDatabaseTable.COL_BRAND_NAME));
+                String clothing=mCursor.getString(mCursor.getColumnIndex(AppDatabaseTable.COL_CLOTHING_NAME));
+                Log.v("MOW","BRAND FOUND "+brand+ " "+clothing);
 
             }
 
