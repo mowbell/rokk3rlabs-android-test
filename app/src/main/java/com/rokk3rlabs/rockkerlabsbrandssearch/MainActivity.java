@@ -14,7 +14,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
+import com.rokk3rlabs.rockkerlabsbrandssearch.adapters.Rokk3rBrandsAddapter;
 import com.rokk3rlabs.rockkerlabsbrandssearch.database.AppDatabaseTable;
 
 
@@ -29,14 +31,6 @@ public class MainActivity extends AppCompatActivity {
         db=new AppDatabaseTable(this);
         db.mDatabaseOpenHelper.getReadableDatabase();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -55,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         // Assumes current activity is the searchable activity
         //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default*/
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default*/
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
@@ -77,7 +71,9 @@ public class MainActivity extends AppCompatActivity {
     private void doSearchQuery(String query) {
         Cursor mCursor=db.getResults(query);
 
-        Log.v("MOW","Cursor data "+mCursor.getCount());
+        showResults(mCursor);
+
+        Log.v("MOW", "Cursor data " + mCursor.getCount());
         if (null == mCursor) {
 			    /*
 			     * Insert code here to handle the error. Be sure not to use the cursor! You may want to
@@ -117,12 +113,19 @@ public class MainActivity extends AppCompatActivity {
                 String a=mCursor.getString(mCursor.getColumnIndex("BRAND_FOUND"));
                 String b=mCursor.getString(mCursor.getColumnIndex("CLOTHING_FOUND"));
 
-                Log.v("MOW",a+" "+b+" ");
+
 
             }
 
 
         }
+    }
+
+    private void showResults(Cursor mCursor) {
+        ListView lvItems = (ListView) findViewById(R.id.listView);
+        Rokk3rBrandsAddapter mAdapter = new Rokk3rBrandsAddapter(this, mCursor);
+        lvItems.setAdapter(mAdapter);
+
     }
 
     @Override

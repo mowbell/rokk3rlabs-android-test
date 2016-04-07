@@ -39,12 +39,12 @@ public class AppDatabaseTable {
 
         private static final String FTS_TABLE_BRAND_CREATE =
                 "CREATE TABLE " + FTS_VIRTUAL_TABLE_BRAND +
-                        " (" +
+                        " ( _id, " +
                         COL_BRAND_NAME + ")";
 
         private static final String FTS_TABLE_CLOTHING_TYPE_CREATE =
                 "CREATE TABLE " + FTS_VIRTUAL_TABLE_CLOTHING +
-                        " (" +
+                        " (_id, " +
                         COL_CLOTHING_NAME + ")";
 
         private static final String FTS_VIEW_MIXED_CREATE =
@@ -148,7 +148,14 @@ public class AppDatabaseTable {
         Log.v("MOW Query", builder.buildQuery(columns, null, null, null, null, null, null));
         Cursor cursor = builder.query(mDatabaseOpenHelper.getReadableDatabase(),
                 columns, null, null, null, null, null);*/
-        String query="SELECT (SELECT "+COL_BRAND_NAME+" FROM "+FTS_VIRTUAL_TABLE_BRAND+" WHERE (length(replace('"+brand+"',"+COL_BRAND_NAME+",'')) != length('"+brand+"')) LIMIT 1) AS BRAND_FOUND, "+ "(SELECT "+COL_CLOTHING_NAME+" FROM "+FTS_VIRTUAL_TABLE_CLOTHING+" WHERE (length(replace('"+brand+"',"+COL_CLOTHING_NAME+",'')) != length('"+brand+"')) LIMIT 1) AS CLOTHING_FOUND ";
+        /*String query="SELECT NULL AS _id, '"+brand+"' AS QUERY, "+COL_BRAND_NAME+" BRAND_FOUND, "+COL_CLOTHING_NAME+" CLOTHING_FOUND ";
+        query+=" FROM ( SELECT "+COL_BRAND_NAME+", "+COL_CLOTHING_NAME+" FROM (SELECT "+COL_BRAND_NAME+" FROM "+FTS_VIRTUAL_TABLE_BRAND+" ";
+        query+="               WHERE (length(replace('"+brand+"',"+COL_BRAND_NAME+",'')) != length('"+brand+"') ) ) JOIN ";
+        query+="      (SELECT "+COL_CLOTHING_NAME+" FROM "+FTS_VIRTUAL_TABLE_CLOTHING+" ";
+        query+="                WHERE (length(replace('"+brand+"',"+COL_CLOTHING_NAME+",'')) != length('"+brand+"'))  )  )";
+        Log.v("MOW Query", query);*/
+
+        String query="SELECT NULL AS _id, '"+brand+"' AS QUERY, (SELECT "+COL_BRAND_NAME+" FROM "+FTS_VIRTUAL_TABLE_BRAND+" WHERE (length(replace('"+brand+"',"+COL_BRAND_NAME+",'')) != length('"+brand+"')) LIMIT 1) AS BRAND_FOUND, "+ "(SELECT "+COL_CLOTHING_NAME+" FROM "+FTS_VIRTUAL_TABLE_CLOTHING+" WHERE (length(replace('"+brand+"',"+COL_CLOTHING_NAME+",'')) != length('"+brand+"')) LIMIT 1) AS CLOTHING_FOUND ";
         Log.v("MOW Query", query);
         Cursor cursor = mDatabaseOpenHelper.getReadableDatabase().rawQuery(query, null);
 
